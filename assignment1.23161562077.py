@@ -1,7 +1,6 @@
 import heapq
 import time
 
-# Grid dari soal
 grid_str = [
     "S..#......",
     ".#.#.####.",
@@ -15,13 +14,10 @@ grid_str = [
     "....#####."
 ]
 
-# Konversi ke list of lists
 grid = [list(row) for row in grid_str]
 
-# Ukuran grid
 rows, cols = len(grid), len(grid[0])
 
-# Temukan titik start dan goal
 for i in range(rows):
     for j in range(cols):
         if grid[i][j] == 'S':
@@ -29,11 +25,9 @@ for i in range(rows):
         elif grid[i][j] == 'G':
             goal = (i, j)
 
-# Heuristik Manhattan Distance
 def manhattan(p1, p2):
     return abs(p1[0] - p2[0]) + abs(p1[1] - p2[1])
 
-# Tetangga yang valid
 def neighbors(pos):
     x, y = pos
     for dx, dy in [(-1,0), (1,0), (0,-1), (0,1)]:
@@ -41,7 +35,6 @@ def neighbors(pos):
         if 0 <= nx < rows and 0 <= ny < cols and grid[nx][ny] != '#':
             yield (nx, ny)
 
-# GBFS
 def gbfs(start, goal):
     frontier = [(manhattan(start, goal), start)]
     came_from = {start: None}
@@ -57,7 +50,6 @@ def gbfs(start, goal):
                 heapq.heappush(frontier, (manhattan(next, goal), next))
     return reconstruct_path(came_from, start, goal), len(explored)
 
-# A* Search
 def astar(start, goal):
     frontier = [(manhattan(start, goal), 0, start)]
     came_from = {start: None}
@@ -77,7 +69,6 @@ def astar(start, goal):
                 came_from[next] = current
     return reconstruct_path(came_from, start, goal), len(explored)
 
-# Rekonstruksi jalur
 def reconstruct_path(came_from, start, goal):
     path = []
     current = goal
@@ -85,12 +76,11 @@ def reconstruct_path(came_from, start, goal):
         path.append(current)
         current = came_from.get(current)
         if current is None:
-            return []  # tidak ada path
+            return []  
     path.append(start)
     path.reverse()
     return path
 
-# Cetak grid dengan path
 def print_path(path):
     grid_copy = [list(row) for row in grid_str]
     for r, c in path:
@@ -99,7 +89,6 @@ def print_path(path):
     for row in grid_copy:
         print("".join(row))
 
-# Jalankan dan bandingkan
 start_time = time.time()
 gbfs_path, gbfs_explored = gbfs(start, goal)
 gbfs_time = time.time() - start_time
